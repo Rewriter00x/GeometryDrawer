@@ -97,7 +97,7 @@ bool RenderThread::AddFigure(const std::string& points)
             return false;
         }
 
-        if (indices.size() >= 3) // make this normal when we support more than quadrangles
+        if (indices.size() >= 3)
         {
             indices.push_back(i - 1);
             indices.push_back(i);
@@ -120,10 +120,12 @@ void RenderThread::AddDebugData()
     AddPoint('B', { 700.f, 700.f });
     AddPoint('C', { 1000.f, 400.f });
     AddPoint('D', { 700.f, 100.f });
-    AddFigure("ABC");
+    AddPoint('E', { 400.f, 100.f });
+    AddPoint('F', { 300.f, 250.f });
+    /*AddFigure("ABC");
     AddFigure("AD");
-    AddFigure("CD");
-    //AddFigure("ABCD");
+    AddFigure("CD");*/
+    AddFigure("ABCDEF");
 #endif
 }
 
@@ -174,15 +176,17 @@ void RenderThread::Run() const
 
 unsigned int RenderThread::GetStringFigureType(const std::string& type)
 {
-    switch (type.size())
+    size_t size = type.size();
+    if (size >= 3)
+    {
+        return GL_TRIANGLES;
+    }
+    switch (size)
     {
     case 1:
         return GL_POINTS;
     case 2:
         return GL_LINES;
-    case 3:
-    case 4:
-        return GL_TRIANGLES;
     default:
         throw 0;
     }
