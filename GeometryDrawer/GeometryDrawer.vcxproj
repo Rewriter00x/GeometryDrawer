@@ -146,6 +146,7 @@
     <ClCompile Include="src\OpenGL\VertexBufferLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Point.h" />
     <ClInclude Include="src\GeometryFigure.h" />
     <ClInclude Include="src\OpenGL\RenderThread.h" />
     <ClInclude Include="src\OpenGL\Shader.h" />

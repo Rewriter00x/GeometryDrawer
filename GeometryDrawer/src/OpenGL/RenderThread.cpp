@@ -65,54 +65,45 @@ RenderThread::~RenderThread()
     {
         delete figure;
     }
-    glfwTerminate();
+    glfwTerminate(); // destroys window
 }
 
-void RenderThread::Run()
+void RenderThread::AddPoint(const std::string& name, const Point& point)
 {
-    float positions[] = {
-         480.f,  270.f,
-         1440.f, 270.f,
-         1440.f, 810.f,
-         480.f, 810.f,
-    };
+    if (m_PointInfos.find(name) != m_PointInfos.end())
+    {
+        m_Points[m_PointInfos[name].location] = point;
+        m_PointInfos[name].point = point;
+    }
+    else
+    {
+        m_Points.push_back(point);
+        m_PointInfos[name] = PointInfo(point, m_Points.size() - 1);
+    }
+    m_Vb->Refill(&m_Points.front(), m_Points.size() * 2 * sizeof(float));
+}
 
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-    };
+void RenderThread::AddDebugData()
+{
+#if _DEBUG
+    AddPoint("A", { 200.f, 200.f });
+    AddPoint("B", { 300.f, 300.f });
+    AddPoint("B", { 500.f, 500.f });
+    AddPoint("C", { 300.f, 300.f });
+#endif
+}
 
-    float pointPos[] = {
-        300.f, 300.f,
-    };
-
-    unsigned int pointIds[] = {
-        0,
-    };
-
-    VertexArray va;
-    VertexBuffer vb(pointPos, sizeof(float) * 2);
-
-    m_Vb->Refill(positions, sizeof(float) * 8);
-
+void RenderThread::Run() const
+{
     VertexBufferLayout layout;
     layout.Push<GL_FLOAT>(2);
     m_Va->AddBuffer(*m_Vb, layout);
-    va.AddBuffer(vb, layout);
-
-    IndexBuffer ib(indices, 6);
-    IndexBuffer pointIb(pointIds, 1);
 
     glm::vec4 color{ .2f, .3f, .8f, 1.f };
-    m_Shader->Bind();
-    m_Shader->SetUniform4fv("u_Color", color);
 
     m_Va->Unbind();
     m_Shader->Unbind();
     m_Vb->Unbind();
-    ib.Unbind();
-
-    Renderer renderer;
 
     glm::mat4 proj;
 
@@ -127,9 +118,7 @@ void RenderThread::Run()
         renderer.Clear();
         m_Shader->Bind();
         m_Shader->SetUniformMat4f("u_PM", proj);
-
-        renderer.Draw(*m_Va, ib, *m_Shader, GL_TRIANGLES);
-        renderer.Draw(va, pointIb, *m_Shader, GL_POINTS);
+        m_Shader->SetUniform4fv("u_Color", color);
 
         for (GeometryFigure* figure : m_Figures)
         {
@@ -139,10 +128,23 @@ void RenderThread::Run()
             renderer.Draw(*m_Va, figure->GetIndexBuffer(), *m_Shader, GL_TRIANGLES);
         }
 
+        DrawPoints();
+
         /* Swap front and back buffers */
         glfwSwapBuffers(m_Window);
 
         /* Poll for and process events */
         glfwPollEvents();
+    }
+}
+
+void RenderThread::DrawPoints() const
+{
+    for (unsigned int i = 0; i < m_Points.size(); ++i)
+    {
+        const Point& point = m_Points[i];
+        m_Shader->Bind();
+        m_Shader->SetUniform4fv("u_Color", { 1.f, 0.f, 0.f, 1.f });
+        renderer.Draw(*m_Va, IndexBuffer(&i, 1), *m_Shader, GL_POINTS);
     }
 }

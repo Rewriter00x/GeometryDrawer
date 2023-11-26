@@ -68,5 +68,8 @@
     <ClInclude Include="src\GeometryFigure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Point.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

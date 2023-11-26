@@ -9,8 +9,10 @@ int main()
     std::jthread renderThread(
         [&rt] {
             rt = new RenderThread;
+            rt->AddDebugData();
             rt->Run();
             delete rt;
         });
+
     return 0;
 }
