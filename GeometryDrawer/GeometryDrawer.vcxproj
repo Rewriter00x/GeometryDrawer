@@ -104,7 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\GLFW\include;$(SolutionDir)Extern\GLEW\include;src\vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Extern\GLFW\include;$(SolutionDir)Extern\GLEW\include;src\vendor;src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +122,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\GLFW\include;$(SolutionDir)Extern\GLEW\include;src\vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Extern\GLFW\include;$(SolutionDir)Extern\GLEW\include;src\vendor;src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,21 +135,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\IndexBuffer.cpp" />
+    <ClCompile Include="src\GeometryFigure.cpp" />
+    <ClCompile Include="src\OpenGL\RenderThread.cpp" />
+    <ClCompile Include="src\OpenGL\Shader.cpp" />
+    <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
-    <ClCompile Include="src\VertexArray.cpp" />
-    <ClCompile Include="src\VertexBufferLayout.cpp" />
+    <ClCompile Include="src\OpenGL\Renderer.cpp" />
+    <ClCompile Include="src\OpenGL\VertexBuffer.cpp" />
+    <ClCompile Include="src\OpenGL\VertexArray.cpp" />
+    <ClCompile Include="src\OpenGL\VertexBufferLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\VertexBuffer.h" />
-    <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\VertexBufferLayout.h" />
+    <ClInclude Include="src\GeometryFigure.h" />
+    <ClInclude Include="src\OpenGL\RenderThread.h" />
+    <ClInclude Include="src\OpenGL\Shader.h" />
+    <ClInclude Include="src\OpenGL\IndexBuffer.h" />
+    <ClInclude Include="src\OpenGL\Renderer.h" />
+    <ClInclude Include="src\OpenGL\VertexBuffer.h" />
+    <ClInclude Include="src\OpenGL\VertexArray.h" />
+    <ClInclude Include="src\OpenGL\VertexBufferLayout.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
