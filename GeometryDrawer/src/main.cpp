@@ -11,6 +11,9 @@
 #include "VertexBufferLayout.h"
 #include "Shader.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -45,10 +48,10 @@ int main(void)
 
     {
         float positions[] = {
-            -.5f, -.5f,
-             .5f, -.5f,
-             .5f,  .5f,
-            -.5f,  .5f
+             480.f,  270.f,
+             1440.f, 270.f,
+             1440.f, 810.f,
+             480.f, 810.f,
         };
 
         unsigned int indices[] = {
@@ -76,29 +79,24 @@ int main(void)
 
         Renderer renderer;
 
-        float r = 0.f;
-        float increment = .05f;
+        glm::mat4 proj;
+        glm::vec4 color {0.f, 1.f, 0.f, 1.f};
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            proj = glm::ortho(0.f, (float)width, 0.f, (float)height);
+
             /* Render here */
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", r, .3f, .8f, 1.f);
+            shader.SetUniform4fv("u_Color", color);
+            shader.SetUniformMat4f("u_PM", proj);
 
-            renderer.Draw(va, ib, shader);
-
-            r += increment;
-
-            if (r > 1.f)
-            {
-                increment = -.05f;
-            }
-            else if (r < 0.f)
-            {
-                increment = .05f;
-            }
+            renderer.Draw(va, ib, shader, GL_TRIANGLES);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

@@ -21,15 +21,13 @@ bool GLLogCall(const char* function, const char* file, int line)
     return true;
 }
 
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, unsigned int mode) const
 {
     shader.Bind();
-    //shader.SetUniform4f("u_Color", r, .3f, .8f, 1.f);
-
     va.Bind();
     ib.Bind();
 
-    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+    GLCall(glDrawElements(mode, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
 
 void Renderer::Clear() const
