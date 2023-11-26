@@ -99,9 +99,9 @@ bool RenderThread::AddFigure(const std::string& points)
 
         if (indices.size() >= 3)
         {
-            indices.push_back(i - 1);
-            indices.push_back(i);
-            indices.push_back(0);
+            indices.push_back(m_PointInfos[points[i - 1]].location);
+            indices.push_back(m_PointInfos[name].location);
+            indices.push_back(m_PointInfos[points[0]].location);
         }
         else
         {
