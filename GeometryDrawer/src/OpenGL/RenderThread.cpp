@@ -103,8 +103,9 @@ void RenderThread::Run()
     IndexBuffer ib(indices, 6);
     IndexBuffer pointIb(pointIds, 1);
 
+    glm::vec4 color{ .2f, .3f, .8f, 1.f };
     m_Shader->Bind();
-    m_Shader->SetUniform4f("u_Color", .2f, .3f, .8f, 1.f);
+    m_Shader->SetUniform4fv("u_Color", color);
 
     m_Va->Unbind();
     m_Shader->Unbind();
@@ -114,7 +115,6 @@ void RenderThread::Run()
     Renderer renderer;
 
     glm::mat4 proj;
-    glm::vec4 color{ 0.f, 1.f, 0.f, 1.f };
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_Window))
