@@ -135,7 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\GeometryFigure.cpp" />
     <ClCompile Include="src\OpenGL\RenderThread.cpp" />
     <ClCompile Include="src\OpenGL\Shader.cpp" />
     <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
@@ -146,8 +145,8 @@
     <ClCompile Include="src\OpenGL\VertexBufferLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Point.h" />
-    <ClInclude Include="src\GeometryFigure.h" />
+    <ClInclude Include="src\Models\Point.h" />
+    <ClInclude Include="src\Models\GeometryFigure.h" />
     <ClInclude Include="src\OpenGL\RenderThread.h" />
     <ClInclude Include="src\OpenGL\Shader.h" />
     <ClInclude Include="src\OpenGL\IndexBuffer.h" />

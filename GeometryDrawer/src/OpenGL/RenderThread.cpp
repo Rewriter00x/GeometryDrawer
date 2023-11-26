@@ -13,8 +13,6 @@
 #include "VertexBufferLayout.h"
 #include "Shader.h"
 
-#include "GeometryFigure.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -47,7 +45,7 @@ RenderThread::RenderThread()
     }
 
     glEnable(GL_PROGRAM_POINT_SIZE);
-    glPointSize(5);
+    glPointSize(10);
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -68,7 +66,7 @@ RenderThread::~RenderThread()
     glfwTerminate(); // destroys window
 }
 
-void RenderThread::AddPoint(const std::string& name, const Point& point)
+void RenderThread::AddPoint(char name, const Point& point)
 {
     if (m_PointInfos.find(name) != m_PointInfos.end())
     {
@@ -83,13 +81,49 @@ void RenderThread::AddPoint(const std::string& name, const Point& point)
     m_Vb->Refill(&m_Points.front(), m_Points.size() * 2 * sizeof(float));
 }
 
+bool RenderThread::AddFigure(const std::string& points)
+{
+    if (points.empty())
+    {
+        return false;
+    }
+
+    std::vector<unsigned int> indices;
+    for (unsigned int i = 0; i < points.size(); ++i)
+    {
+        char name = points[i];
+        if (m_PointInfos.find(name) == m_PointInfos.end())
+        {
+            return false;
+        }
+
+        if (indices.size() >= 3) // make this normal when we support more than quadrangles
+        {
+            indices.push_back(i - 1);
+            indices.push_back(i);
+            indices.push_back(0);
+        }
+        else
+        {
+            indices.push_back(m_PointInfos[name].location);
+        }
+    }
+    m_Figures.emplace_back(new GeometryFigure{ IndexBuffer(&indices.front(), indices.size()), GetStringFigureType(points) });
+    return true;
+}
+
 void RenderThread::AddDebugData()
 {
 #if _DEBUG
-    AddPoint("A", { 200.f, 200.f });
-    AddPoint("B", { 300.f, 300.f });
-    AddPoint("B", { 500.f, 500.f });
-    AddPoint("C", { 300.f, 300.f });
+    AddPoint('A', { 400.f, 400.f });
+    AddPoint('B', { 300.f, 300.f });
+    AddPoint('B', { 700.f, 700.f });
+    AddPoint('C', { 1000.f, 400.f });
+    AddPoint('D', { 700.f, 100.f });
+    AddFigure("ABC");
+    AddFigure("AD");
+    AddFigure("CD");
+    //AddFigure("ABCD");
 #endif
 }
 
@@ -123,9 +157,9 @@ void RenderThread::Run() const
         for (GeometryFigure* figure : m_Figures)
         {
             m_Shader->Bind();
-            m_Shader->SetUniform4fv("u_Color", figure->GetColor());
+            m_Shader->SetUniform4fv("u_Color", figure->Color);
 
-            renderer.Draw(*m_Va, figure->GetIndexBuffer(), *m_Shader, GL_TRIANGLES);
+            renderer.Draw(*m_Va, figure->Ib, *m_Shader, figure->Type);
         }
 
         DrawPoints();
@@ -135,6 +169,22 @@ void RenderThread::Run() const
 
         /* Poll for and process events */
         glfwPollEvents();
+    }
+}
+
+unsigned int RenderThread::GetStringFigureType(const std::string& type)
+{
+    switch (type.size())
+    {
+    case 1:
+        return GL_POINTS;
+    case 2:
+        return GL_LINES;
+    case 3:
+    case 4:
+        return GL_TRIANGLES;
+    default:
+        throw 0;
     }
 }
 

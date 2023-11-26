@@ -1,7 +1,7 @@
 #pragma once
 struct Point
 {
-	float x = 0.f;
-	float y = 0.f;
+	float X = 0.f;
+	float Y = 0.f;
 };
 

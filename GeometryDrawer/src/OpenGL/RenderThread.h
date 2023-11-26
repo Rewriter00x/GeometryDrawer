@@ -3,13 +3,13 @@
 #include <vector>
 #include <unordered_map>
 
-#include "GeometryFigure.h"
+#include "Models/GeometryFigure.h"
 
 #include "Renderer.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "Shader.h"
-#include "Point.h"
+#include "Models/Point.h"
 
 class GLFWwindow;
 
@@ -19,7 +19,8 @@ public:
 	RenderThread();
 	~RenderThread();
 
-	void AddPoint(const std::string& name, const Point& point);
+	void AddPoint(char name, const Point& point);
+	bool AddFigure(const std::string& points);
 	void AddDebugData();
 
 	void Run() const;
@@ -32,7 +33,10 @@ private:
 		unsigned int location;
 	};
 
+	static unsigned int GetStringFigureType(const std::string& type);
+
 	void DrawPoints() const;
+
 
 	Renderer renderer;
 
@@ -44,7 +48,7 @@ private:
 
 	std::vector<GeometryFigure*> m_Figures;
 	std::vector<Point> m_Points;
-	std::unordered_map<std::string, PointInfo> m_PointInfos;
+	std::unordered_map<char, PointInfo> m_PointInfos;
 	
 };
 

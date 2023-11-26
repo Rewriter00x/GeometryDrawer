@@ -39,9 +39,6 @@
     <ClCompile Include="src\OpenGL\RenderThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GeometryFigure.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\OpenGL\Renderer.h">
@@ -65,10 +62,10 @@
     <ClInclude Include="src\OpenGL\RenderThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GeometryFigure.h">
+    <ClInclude Include="src\Models\GeometryFigure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Point.h">
+    <ClInclude Include="src\Models\Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
