@@ -4,6 +4,7 @@
 #include "windows.h"
 
 #include "OpenGL/RenderThread.h"
+#include "glm/glm.hpp"
 #include "Parser.h"
 
 RenderThread* rt = nullptr;
@@ -17,10 +18,12 @@ static void AddPoint(const ParsedCommand& command)
 
 static void DrawFigure(const ParsedCommand& command)
 {
-    /*using convert_type = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_type, wchar_t> converter;
-    std::string converted_str = converter.to_bytes(command.Value);
-    rt->AddFigure(converted_str);*/
+    std::string value;
+    size_t size = command.Value.size();
+    value.resize(size);
+    wcstombs_s(&size, &value[0], value.size() + 1, command.Value.c_str(), command.Value.size());
+    const std::vector<float>& data = command.OptionalData;
+    rt->AddFigureQueue(value, glm::vec4(data[0], data[1], data[2], data[3]));
 }
 
 static void ExecuteCommand(const ParsedCommand& command)
@@ -52,7 +55,7 @@ int main()
     std::jthread renderThread(
         [] {
             rt = new RenderThread;
-            rt->AddDebugData();
+            //rt->AddDebugData();
             rt->Run();
             delete rt;
         }

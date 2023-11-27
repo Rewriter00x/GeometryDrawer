@@ -1,7 +1,7 @@
 ﻿#include "Parser.h"
-#include "OpenGL/RenderThread.h" 
-#include "glm/glm.hpp"
+#include "OpenGL/RenderThread.h"
 #include <unordered_set>
+#include <unordered_map>
 #include <iostream>
 #include <sstream>
 
@@ -19,6 +19,18 @@ static const std::vector<std::wstring> pointValue = {
 	L"точк",
 };
 
+static const std::vector<std::wstring> figureValue = {
+	L"фігур", L"прям", L"трикутник", L"чотирикутник",
+};
+
+static std::unordered_map<std::wstring, std::vector<float>> colorValues = {
+	{ L"чорн", { 0.f, 0.f, 0.f, 1.f } },
+	{ L"біл", { 1.f, 1.f, 1.f, 1.f } },
+	{ L"червон", { 1.f, 0.f, 0.f, 1.f } },
+	{ L"син", { 0.f, 0.f, 1.f, 1.f } },
+	{ L"зелен", { 0.f, 1.f, 0.f, 1.f } },
+};
+
 static bool HasPart(const std::wstring& command, const std::vector<std::wstring>& tokens)
 {
 	for (const std::wstring& token : tokens)
@@ -29,6 +41,19 @@ static bool HasPart(const std::wstring& command, const std::vector<std::wstring>
 		}
 	}
 	return false;
+}
+
+static const std::vector<float>* HasPart(const std::wstring& command, std::unordered_map<std::wstring, std::vector<float>>& tokens)
+{
+	for (const auto& token : tokens)
+	{
+		if (command.find(token.first) != std::wstring::npos)
+		{
+			std::wstring name = token.first;
+			return &tokens[name];
+		}
+	}
+	return nullptr;
 }
 
 static CommandType GetType(const std::wstring& token)
@@ -64,7 +89,20 @@ static ParsedCommand ParseAddPoint(const std::vector<std::wstring>& tokens)
 
 static ParsedCommand ParseDrawFigure(const std::vector<std::wstring>& tokens)
 {
-	return ParsedCommand{ CommandType::DrawFigure };
+	const std::vector<float>* color;
+	if (tokens.size() != 4)
+	{
+		return ParsedCommand{};
+	}
+	if (color = HasPart(tokens[1], colorValues))
+	{
+		if (!HasPart(tokens[2], figureValue))
+		{
+			return ParsedCommand{};
+		}
+		return ParsedCommand{ CommandType::DrawFigure, tokens[3], *color};
+	}
+	return ParsedCommand{};
 }
 
 static ParsedCommand ParseVector(const std::vector<std::wstring>& tokens)

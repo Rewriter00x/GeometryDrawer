@@ -21,7 +21,7 @@ public:
 	void AddDebugData();
 
 	void AddPointQueue(char name, const Point& point);
-	void AddFigureQueue(const std::string& points);
+	void AddFigureQueue(const std::string& points, const glm::vec4& color);
 
 	void Run();
 
@@ -45,6 +45,17 @@ private:
 		Point m_Point;
 	};
 
+	class AddFigureEvent : public UpdateEvent
+	{
+	public:
+		AddFigureEvent(const std::string& value, const glm::vec4& color);
+		virtual void Exec(RenderThread* thread) override;
+
+	private:
+		std::string m_Value;
+		glm::vec4 m_Color;
+	};
+
 	struct PointInfo
 	{
 		Point point;
@@ -54,7 +65,7 @@ private:
 	static unsigned int GetStringFigureType(const std::string& type);
 
 	void AddPoint(char name, const Point& point);
-	bool AddFigure(const std::string& points);
+	bool AddFigure(const std::string& points, const glm::vec4& color);
 
 	void DrawPoints() const;
 

@@ -81,7 +81,7 @@ void RenderThread::AddPoint(char name, const Point& point)
     m_Vb->Refill(&m_Points.front(), m_Points.size() * 2 * sizeof(float));
 }
 
-bool RenderThread::AddFigure(const std::string& points)
+bool RenderThread::AddFigure(const std::string& points, const glm::vec4& color)
 {
     if (points.empty())
     {
@@ -108,7 +108,7 @@ bool RenderThread::AddFigure(const std::string& points)
             indices.push_back(m_PointInfos[name].location);
         }
     }
-    m_Figures.emplace_back(new GeometryFigure{ IndexBuffer(&indices.front(), indices.size()), GetStringFigureType(points) });
+    m_Figures.emplace_back(new GeometryFigure{ IndexBuffer(&indices.front(), indices.size()), GetStringFigureType(points), color });
     return true;
 }
 
@@ -134,8 +134,9 @@ void RenderThread::AddPointQueue(char name, const Point& point)
     m_Events.push_back(new AddPointEvent(name, point));
 }
 
-void RenderThread::AddFigureQueue(const std::string& points)
+void RenderThread::AddFigureQueue(const std::string& points, const glm::vec4& color)
 {
+    m_Events.push_back(new AddFigureEvent(points, color));
 }
 
 void RenderThread::Run()
@@ -232,4 +233,14 @@ RenderThread::AddPointEvent::AddPointEvent(char name, const Point& point)
 void RenderThread::AddPointEvent::Exec(RenderThread* thread)
 {
     thread->AddPoint(m_Name, m_Point);
+}
+
+RenderThread::AddFigureEvent::AddFigureEvent(const std::string& value, const glm::vec4& color)
+    : m_Value(value), m_Color(color)
+{
+}
+
+void RenderThread::AddFigureEvent::Exec(RenderThread* thread)
+{
+    thread->AddFigure(m_Value, m_Color);
 }
