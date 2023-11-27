@@ -124,12 +124,21 @@ void RenderThread::AddDebugData()
     AddPoint('F', { 300.f, 250.f });
     /*AddFigure("ABC");
     AddFigure("AD");
-    AddFigure("CD");*/
-    AddFigure("ABCDEF");
+    AddFigure("CD");
+    AddFigure("ABCDEF");*/
 #endif
 }
 
-void RenderThread::Run() const
+void RenderThread::AddPointQueue(char name, const Point& point)
+{
+    m_Events.push_back(new AddPointEvent(name, point));
+}
+
+void RenderThread::AddFigureQueue(const std::string& points)
+{
+}
+
+void RenderThread::Run()
 {
     VertexBufferLayout layout;
     layout.Push<GL_FLOAT>(2);
@@ -146,6 +155,7 @@ void RenderThread::Run() const
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_Window))
     {
+        pollEvents();
         int width, height;
         glfwGetWindowSize(m_Window, &width, &height);
         proj = glm::ortho(0.f, (float)width, 0.f, (float)height);
@@ -201,4 +211,25 @@ void RenderThread::DrawPoints() const
         m_Shader->SetUniform4fv("u_Color", { 1.f, 0.f, 0.f, 1.f });
         renderer.Draw(*m_Va, IndexBuffer(&i, 1), *m_Shader, GL_POINTS);
     }
+}
+
+void RenderThread::pollEvents()
+{
+    while (!m_Events.empty())
+    {
+        UpdateEvent* evt = m_Events.back();
+        evt->Exec(this);
+        delete evt;
+        m_Events.pop_back();
+    }
+}
+
+RenderThread::AddPointEvent::AddPointEvent(char name, const Point& point)
+    : m_Name(name), m_Point(point)
+{
+}
+
+void RenderThread::AddPointEvent::Exec(RenderThread* thread)
+{
+    thread->AddPoint(m_Name, m_Point);
 }

@@ -18,15 +18,33 @@ class RenderThread
 public:
 	RenderThread();
 	~RenderThread();
-
-	void AddPoint(char name, const Point& point);
-	bool AddFigure(const std::string& points);
 	void AddDebugData();
 
-	void Run() const;
+	void AddPointQueue(char name, const Point& point);
+	void AddFigureQueue(const std::string& points);
+
+	void Run();
 
 
 private:
+	class UpdateEvent
+	{
+	public:
+		virtual ~UpdateEvent() {}
+		virtual void Exec(RenderThread* thread) = 0;;
+	};
+
+	class AddPointEvent : public UpdateEvent
+	{
+	public:
+		AddPointEvent(char name, const Point& point);
+		virtual void Exec(RenderThread* thread) override;
+		
+	private:
+		char m_Name;
+		Point m_Point;
+	};
+
 	struct PointInfo
 	{
 		Point point;
@@ -35,8 +53,12 @@ private:
 
 	static unsigned int GetStringFigureType(const std::string& type);
 
+	void AddPoint(char name, const Point& point);
+	bool AddFigure(const std::string& points);
+
 	void DrawPoints() const;
 
+	void pollEvents();
 
 	Renderer renderer;
 
@@ -49,6 +71,8 @@ private:
 	std::vector<GeometryFigure*> m_Figures;
 	std::vector<Point> m_Points;
 	std::unordered_map<char, PointInfo> m_PointInfos;
+
+	std::vector<UpdateEvent*> m_Events;
 	
 };
 
